@@ -1,55 +1,25 @@
 package view;
 
-
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import java.awt.*;
+import java.awt.event.*;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
-import javax.swing.JSeparator;
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JTabbedPane;
-import java.awt.GridLayout;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.JFormattedTextField;
-import javax.swing.JComboBox;
-import java.awt.Font;
 public class TelaGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField textField;
-	private JTextField textField_2;
-	private JTextField textField_1;
-	private JTextField textField_3;
-	private JTextField textField_4;
+	private JTextField txtRgm, txtNome, txtEmail, txtEnd, txtMunicipio;
+	private JFormattedTextField txtCpf, txtDataNasc, txtCelular;
+	private JComboBox<String> cbUf;
 
-
-	/**
-	 * Create the frame.
-	 * @throws Exception 
-	 */
 	public TelaGUI() throws Exception {
 		setFont(new Font("Arial", Font.PLAIN, 14));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 605, 375);
+		setBounds(100, 100, 650, 450);
 		
-		//----Menu
+		// Menu
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -74,11 +44,7 @@ public class TelaGUI extends JFrame {
 		mnAluno.add(separator);
 		
 		JMenuItem mntmSairAluno = new JMenuItem("Sair");
-		mntmSairAluno.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+		mntmSairAluno.addActionListener(e -> System.exit(0));
 		mntmSairAluno.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK));
 		mnAluno.add(mntmSairAluno);
 		
@@ -104,178 +70,131 @@ public class TelaGUI extends JFrame {
 		JMenuItem mntmSobreAjuda = new JMenuItem("Sobre");
 		mnAjuda.add(mntmSobreAjuda);
 		
-		//Painel 
+		// Painel principal com layout absoluto
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null); // Layout absoluto
 		setContentPane(contentPane);
-		contentPane.setLayout(new GridLayout(0, 1, 0, 0));
 		
-		//Abas utilizando JTabbedPane
+		// JTabbedPane
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		tabbedPane.setBounds(10, 10, 614, 370);
 		contentPane.add(tabbedPane);
 		
-		//-------Aba de Dados Pessoais------
+		// ========== Aba Dados Pessoais ==========
 		JPanel dadosPanel = new JPanel();
-		tabbedPane.addTab("Dados Pessoais", null, dadosPanel, null);
+		dadosPanel.setLayout(null);
+		tabbedPane.addTab("Dados Pessoais", dadosPanel);
 		
-		JLabel lblNewLabel = new JLabel("RGM");
-		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		// RGM
+		JLabel lblRgm = new JLabel("RGM");
+		lblRgm.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblRgm.setBounds(20, 53, 50, 25);
+		dadosPanel.add(lblRgm);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-		textField.setColumns(10);
+		txtRgm = new JTextField();
+		txtRgm.setBounds(60, 53, 150, 25);
+		dadosPanel.add(txtRgm);
 		
+		// Nome
 		JLabel lblNome = new JLabel("Nome");
 		lblNome.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblNome.setBounds(244, 53, 50, 25);
+		dadosPanel.add(lblNome);
 		
-		JLabel lblNewLabel_1 = new JLabel("CPF");
-		lblNewLabel_1.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-		JFormattedTextField formattedTextField = new JFormattedTextField(new MaskFormatter ("###.###.###-##"));
+		txtNome = new JTextField();
+		txtNome.setBounds(288, 53, 280, 25);
+		dadosPanel.add(txtNome);
 		
-		JLabel lblNewLabel_2 = new JLabel("Data de Nascimento");
-		lblNewLabel_2.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-		JFormattedTextField formattedTextField_1 = new JFormattedTextField(new MaskFormatter("##/##/####"));
-		formattedTextField_1.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		// CPF
+		JLabel lblCpf = new JLabel("CPF");
+		lblCpf.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblCpf.setBounds(300, 119, 50, 25);
+		dadosPanel.add(lblCpf);
 		
-		JLabel lblNewLabel_3 = new JLabel("Email");
-		lblNewLabel_3.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
+		txtCpf = new JFormattedTextField(new MaskFormatter("###.###.###-##"));
+		txtCpf.setBounds(348, 119, 150, 25);
+		dadosPanel.add(txtCpf);
 		
-		JLabel lblNewLabel_4 = new JLabel("End.");
-		lblNewLabel_4.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		// Data de Nascimento
+		JLabel lblDataNasc = new JLabel("Data de Nascimento");
+		lblDataNasc.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblDataNasc.setBounds(20, 119, 150, 25);
+		dadosPanel.add(lblDataNasc);
 		
-		JLabel lblNewLabel_5 = new JLabel("Município");
-		lblNewLabel_5.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		txtDataNasc = new JFormattedTextField(new MaskFormatter("##/##/####"));
+		txtDataNasc.setBounds(159, 119, 100, 25);
+		dadosPanel.add(txtDataNasc);
 		
-		JLabel lblNewLabel_6 = new JLabel("UF");
-		lblNewLabel_6.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		// Email
+		JLabel lblEmail = new JLabel("Email");
+		lblEmail.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblEmail.setBounds(20, 178, 50, 25);
+		dadosPanel.add(lblEmail);
 		
+		txtEmail = new JTextField();
+		txtEmail.setBounds(60, 178, 360, 25);
+		dadosPanel.add(txtEmail);
 		
-		JLabel lblNewLabel_7 = new JLabel("Celular");
-		lblNewLabel_7.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-		JFormattedTextField formattedTextField_2 = new JFormattedTextField(new MaskFormatter ("(##)#####-####"));
+		// Endereço
+		JLabel lblEnd = new JLabel("End.");
+		lblEnd.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblEnd.setBounds(20, 227, 50, 25);
+		dadosPanel.add(lblEnd);
 		
-		textField_1 = new JTextField();
-		textField_1.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-		textField_1.setColumns(10);
+		txtEnd = new JTextField();
+		txtEnd.setBounds(60, 227, 360, 25);
+		dadosPanel.add(txtEnd);
 		
-		textField_3 = new JTextField();
-		textField_3.setColumns(10);
+		// Município
+		JLabel lblMunicipio = new JLabel("Município");
+		lblMunicipio.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblMunicipio.setBounds(20, 273, 80, 25);
+		dadosPanel.add(lblMunicipio);
 		
-		textField_4 = new JTextField();
-		textField_4.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
-		textField_4.setColumns(10);
+		txtMunicipio = new JTextField();
+		txtMunicipio.setBounds(95, 273, 150, 25);
+		dadosPanel.add(txtMunicipio);
 		
-		JComboBox comboBox = new JComboBox();
+		// UF
+		JLabel lblUf = new JLabel("UF");
+		lblUf.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblUf.setBounds(267, 273, 40, 25);
+		dadosPanel.add(lblUf);
 		
-		//----Posicoes dos labes e fields no panel
-		GroupLayout gl_dadosPanel = new GroupLayout(dadosPanel);
-		gl_dadosPanel.setHorizontalGroup(
-			gl_dadosPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_dadosPanel.createSequentialGroup()
-					.addGap(16)
-					.addGroup(gl_dadosPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_dadosPanel.createSequentialGroup()
-							.addGroup(gl_dadosPanel.createParallelGroup(Alignment.TRAILING)
-								.addGroup(gl_dadosPanel.createSequentialGroup()
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblNewLabel_2)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(formattedTextField_1, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-								.addGroup(gl_dadosPanel.createSequentialGroup()
-									.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(textField, GroupLayout.PREFERRED_SIZE, 171, GroupLayout.PREFERRED_SIZE)
-									.addGap(101)))
-							.addGap(15)
-							.addGroup(gl_dadosPanel.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblNewLabel_1)
-								.addComponent(lblNome, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_dadosPanel.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_dadosPanel.createSequentialGroup()
-									.addComponent(formattedTextField, GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
-									.addPreferredGap(ComponentPlacement.RELATED))
-								.addComponent(textField_1, GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)))
-						.addGroup(gl_dadosPanel.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_dadosPanel.createParallelGroup(Alignment.LEADING)
-								.addGroup(gl_dadosPanel.createSequentialGroup()
-									.addComponent(lblNewLabel_4)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, 345, GroupLayout.PREFERRED_SIZE))
-								.addGroup(gl_dadosPanel.createSequentialGroup()
-									.addComponent(lblNewLabel_3)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, 345, GroupLayout.PREFERRED_SIZE))))
-						.addGroup(gl_dadosPanel.createSequentialGroup()
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblNewLabel_5)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textField_4, GroupLayout.PREFERRED_SIZE, 151, GroupLayout.PREFERRED_SIZE)
-							.addGap(26)
-							.addComponent(lblNewLabel_6)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(lblNewLabel_7)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(formattedTextField_2, GroupLayout.PREFERRED_SIZE, 152, GroupLayout.PREFERRED_SIZE)))
-					.addGap(26))
-		);
-		gl_dadosPanel.setVerticalGroup(
-			gl_dadosPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_dadosPanel.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_dadosPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField_1, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNome, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textField, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-					.addGap(35)
-					.addGroup(gl_dadosPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_2)
-						.addComponent(formattedTextField_1, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel_1)
-						.addComponent(formattedTextField, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-					.addGap(33)
-					.addGroup(gl_dadosPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_3)
-						.addComponent(textField_2, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
-					.addGap(11)
-					.addGroup(gl_dadosPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_4)
-						.addComponent(textField_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(23)
-					.addGroup(gl_dadosPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblNewLabel_5)
-						.addComponent(textField_4, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblNewLabel_6)
-						.addComponent(lblNewLabel_7)
-						.addComponent(formattedTextField_2, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
-						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(27, Short.MAX_VALUE))
-		);
+		cbUf = new JComboBox<>(new String[]{"SP", "RJ", "MG", "ES", "BA", "PR", "SC", "RS"});
+		cbUf.setBounds(300, 273, 60, 27);
+		dadosPanel.add(cbUf);
 		
-		dadosPanel.setLayout(gl_dadosPanel);
+		// Celular
+		JLabel lblCelular = new JLabel("Celular");
+		lblCelular.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblCelular.setBounds(372, 273, 60, 25);
+		dadosPanel.add(lblCelular);
 		
-		//Aba do Curso
+		txtCelular = new JFormattedTextField(new MaskFormatter("(##)#####-####"));
+		txtCelular.setBounds(432, 273, 130, 25);
+		dadosPanel.add(txtCelular);
+		
+		// ========== Aba Curso ==========
 		JPanel cursoPanel = new JPanel();
-		tabbedPane.addTab("Curso", null, cursoPanel, null);
+		cursoPanel.setLayout(null);
+		tabbedPane.addTab("Curso", cursoPanel);
 		
+		
+		// ========== Aba Notas e Faltas ==========
 		JPanel notasPanel = new JPanel();
-		tabbedPane.addTab("Notas e Faltas", null, notasPanel, null);
-		
-		JPanel boletimPanel = new JPanel();
-		tabbedPane.addTab("Boletim", null, boletimPanel, null);
-		
-		
-		
-		
+		notasPanel.setLayout(null);
+		tabbedPane.addTab("Notas e Faltas", notasPanel);
 		
 
+		
+		// ========== Aba Boletim ==========
+		JPanel boletimPanel = new JPanel();
+		boletimPanel.setLayout(null);
+		tabbedPane.addTab("Boletim", boletimPanel);
+		
+		
 	}
+	
 }
