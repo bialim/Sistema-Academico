@@ -12,14 +12,14 @@ public class TelaGUI extends JFrame {
 	private JPanel contentPane;
 	private JTextField txtRgm, txtNome, txtEmail, txtEnd, txtMunicipio;
 	private JFormattedTextField txtCpf, txtDataNasc, txtCelular;
-	private JComboBox<String> cbUf;
+	private JComboBox<String> cbUf, cbCurso, cbCampus;
 
 	public TelaGUI() throws Exception {
 		setFont(new Font("Arial", Font.PLAIN, 14));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 650, 450);
 		
-		// Menu
+		//=========Menu===========
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -70,7 +70,7 @@ public class TelaGUI extends JFrame {
 		JMenuItem mntmSobreAjuda = new JMenuItem("Sobre");
 		mnAjuda.add(mntmSobreAjuda);
 		
-		// Painel principal com layout absoluto
+		// Painel principal 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null); // Layout absoluto
@@ -163,7 +163,7 @@ public class TelaGUI extends JFrame {
 		dadosPanel.add(lblUf);
 		
 		cbUf = new JComboBox<>(new String[]{"SP", "RJ", "MG", "ES", "BA", "PR", "SC", "RS"});
-		cbUf.setBounds(300, 273, 60, 27);
+		cbUf.setBounds(288, 274, 72, 27);
 		dadosPanel.add(cbUf);
 		
 		// Celular
@@ -181,6 +181,66 @@ public class TelaGUI extends JFrame {
 		cursoPanel.setLayout(null);
 		tabbedPane.addTab("Curso", cursoPanel);
 		
+		//Curso
+		JLabel lblCurso = new JLabel("Curso");
+		lblCurso.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblCurso.setBounds(44, 39, 41, 16);
+		cursoPanel.add(lblCurso);
+		
+		cbCurso= new JComboBox<>(new String[] {"Enfermagem", "Biomedicina", "Educação Física", "Direito",  "Psicologia", "Ciência da Computação", "Análise e Desenvolvimento de Sistemas", "Administração", "Ciências Contábeis"});
+		cbCurso.setBounds(116, 39, 426, 21);
+		cursoPanel.add(cbCurso);
+		
+		//Campus
+		JLabel lblNewLabel = new JLabel("Campus");
+		lblNewLabel.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblNewLabel.setBounds(44, 103, 61, 16);
+		cursoPanel.add(lblNewLabel);
+		
+		cbCampus = new JComboBox<>(new String[] {"Tatuapé", "Villa-Lobos"});
+		cbCampus.setBounds(116, 104, 426, 19);
+		cursoPanel.add(cbCampus);
+		
+		//Periodo
+		JLabel lblPeriodo = new JLabel("Período");
+		lblPeriodo.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		lblPeriodo.setBounds(44, 163, 61, 16);
+		cursoPanel.add(lblPeriodo);
+		
+		JRadioButton rdbtnMatutino = new JRadioButton("Matutino");
+		rdbtnMatutino.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		rdbtnMatutino.setBounds(131, 160, 101, 23);
+		cursoPanel.add(rdbtnMatutino);
+		
+		JRadioButton rdbtnVespertino = new JRadioButton("Vespertino");
+		rdbtnVespertino.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		rdbtnVespertino.setBounds(257, 160, 107, 23);
+		cursoPanel.add(rdbtnVespertino);
+		
+		JRadioButton rdbtnNoturno = new JRadioButton("Noturno");
+		rdbtnNoturno.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		rdbtnNoturno.setBounds(398, 160, 112, 23);
+		cursoPanel.add(rdbtnNoturno);
+		
+		
+		JButton btnNewButton = new JButton("");
+		btnNewButton.setBounds(44, 225, 92, 75);
+		cursoPanel.add(btnNewButton);
+		
+		
+		JButton btnNewButton_1 = new JButton("");
+		btnNewButton_1.setBounds(176, 225, 92, 75);
+		cursoPanel.add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("");
+		btnNewButton_2.setBounds(300, 225, 92, 75);
+		cursoPanel.add(btnNewButton_2);
+		
+		JButton btnNewButton_3 = new JButton("");
+		btnNewButton_3.setIcon(new ImageIcon("/Users/beatriz/Downloads/java-2.png"));
+		btnNewButton_3.setBounds(430, 225, 92, 75);
+		cursoPanel.add(btnNewButton_3);
+	
 		
 		// ========== Aba Notas e Faltas ==========
 		JPanel notasPanel = new JPanel();
@@ -196,5 +256,4 @@ public class TelaGUI extends JFrame {
 		
 		
 	}
-	
 }
