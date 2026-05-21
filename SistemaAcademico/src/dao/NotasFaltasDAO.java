@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import connection.ConnectionFactory; 
+import util.ConnectionFactory; 
 import model.NotasFaltas;
 
 public class NotasFaltasDAO {

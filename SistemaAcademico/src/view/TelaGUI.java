@@ -3,8 +3,17 @@ package view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
+
+import util.ConnectionFactory;
+
 import java.awt.*;
 import java.awt.event.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.swing.table.DefaultTableModel;
 
 public class TelaGUI extends JFrame {
 
@@ -13,6 +22,12 @@ public class TelaGUI extends JFrame {
 	private JTextField txtRgm, txtNome, txtEmail, txtEnd, txtMunicipio;
 	private JFormattedTextField txtCpf, txtDataNasc, txtCelular;
 	private JComboBox<String> cbUf, cbCurso, cbCampus;
+	
+	private JTable tabela;
+
+	private JTextField txtRgmBo;
+	private JTextField txtNomeBo;
+	private JTextField txtCursoBo;
 
 	public TelaGUI() throws Exception {
 		setFont(new Font("Arial", Font.PLAIN, 14));
@@ -254,6 +269,188 @@ public class TelaGUI extends JFrame {
 		boletimPanel.setLayout(null);
 		tabbedPane.addTab("Boletim", boletimPanel);
 		
+		// ===== DADOS DO ALUNO =====
+
+		        //todos jtext tirei p puxar do banco
+				JLabel lblRgmBo = new JLabel("RGM:");
+				lblRgmBo.setBounds(20, 20, 50, 25);
+				boletimPanel.add(lblRgmBo);
+
+				txtRgmBo = new JTextField();
+				txtRgmBo.setBounds(70, 20, 120, 25);
+				boletimPanel.add(txtRgmBo);
+
+				JLabel lblNomeBo = new JLabel("Nome:");
+				lblNomeBo.setBounds(220, 20, 50, 25);
+				boletimPanel.add(lblNomeBo);
+
+				txtNomeBo = new JTextField();
+				txtNomeBo.setBounds(280, 20, 140, 25);
+				boletimPanel.add(txtNomeBo);
+
+				JLabel lblCursoBo = new JLabel("Curso:");
+				lblCursoBo.setBounds(20, 60, 50, 25);
+				boletimPanel.add(lblCursoBo);
+
+				txtCursoBo = new JTextField();
+				txtCursoBo.setBounds(70, 60, 120, 25);
+				boletimPanel.add(txtCursoBo);
+
+				// ===== TABELA =====
+
+				String colunas[] = {
+					"Disciplina",
+					"Nota 1",
+					"Nota 2",
+					"Média",
+					"Faltas",
+					"Situação"
+				};
+
+				String dados[][] = {
+					
+				};
+
+				//mudado
+				DefaultTableModel modelo =
+				        new DefaultTableModel(dados, colunas);
+
+				tabela = new JTable(modelo);
+
+				JScrollPane scrollPane = new JScrollPane(tabela);
+				scrollPane.setBounds(20, 109, 400, 100);
+				boletimPanel.add(scrollPane);
+
+				// ===== RESUMO =====
+
+				JLabel lblMediaGeral = new JLabel("Média Geral: 7.5");
+				lblMediaGeral.setBounds(20, 250, 150, 25);
+				boletimPanel.add(lblMediaGeral);
+
+				JLabel lblFaltas = new JLabel("Total de Faltas: 6");
+				lblFaltas.setBounds(200, 250, 150, 25);
+				boletimPanel.add(lblFaltas);
+				
+				//botao buscar
+				JButton btnBuscar =
+				        new JButton("Buscar");
+
+				btnBuscar.setBounds(450, 20, 100, 25);
+
+				boletimPanel.add(btnBuscar);
+				
+				btnBuscar.addActionListener(e -> {
+
+				    buscarBoletim(
+				            txtRgmBo.getText()
+				    );
+
+				});
 		
+	}
+	
+	//método buscar
+	private void buscarBoletim(String rgm) {
+
+	    try {
+
+	        Connection conn = ConnectionFactory.getConnection();
+
+	        // ========================
+	        // DADOS DO ALUNO
+	        // ========================
+
+	        String sqlAluno =
+	                "SELECT a.nome, c.nome_curso " +
+	                "FROM tb_aluno a " +
+	                "INNER JOIN tb_curso c " +
+	                "ON a.id_curso = c.id_curso " +
+	                "WHERE a.rgm = ?";
+
+	        PreparedStatement psAluno =
+	                conn.prepareStatement(sqlAluno);
+
+	        psAluno.setString(1, rgm);
+
+	        ResultSet rsAluno =
+	                psAluno.executeQuery();
+
+	        if (rsAluno.next()) {
+
+	            txtNomeBo.setText(
+	                    rsAluno.getString("nome")
+	            );
+
+	            txtCursoBo.setText(
+	                    rsAluno.getString("nome_curso")
+	            );
+	        }
+
+	        // =========================
+	        // NOTAS
+	        // =========================
+
+	        String sqlNotas =
+
+	                "SELECT d.nome_disciplina, " +
+	                "n.nota, n.faltas " +
+
+	                "FROM tb_notas_faltas n " +
+
+	                "INNER JOIN tb_disciplina d " +
+
+	                "ON n.id_disciplina = d.id_disciplina " +
+
+	                "WHERE n.rgm = ?";
+
+	        PreparedStatement psNotas =
+	                conn.prepareStatement(sqlNotas);
+
+	        psNotas.setString(1, rgm);
+
+	        ResultSet rsNotas =
+	                psNotas.executeQuery();
+
+	        DefaultTableModel modelo =
+	                (DefaultTableModel) tabela.getModel();
+
+	        modelo.setRowCount(0);
+
+	        while (rsNotas.next()) {
+
+	            double nota =
+	                    rsNotas.getDouble("nota");
+
+	            String situacao =
+	                    nota >= 6
+	                            ? "Aprovado"
+	                            : "Reprovado";
+
+	            modelo.addRow(new Object[] {
+
+	                    rsNotas.getString("nome_disciplina"),
+	                    nota,
+	                    "-",
+	                    nota,
+	                    rsNotas.getInt("faltas"),
+	                    situacao
+	            });
+	        }
+
+	        conn.close();
+
+	    } catch (Exception e) {
+
+	        JOptionPane.showMessageDialog(
+	                null,
+	                "Erro: " + e.getMessage()
+	        );
+	    }
+	}
+	
+	//metodo main
+	public static void main (String[]args) throws Exception {
+		TelaGUI tela = new TelaGUI();
+		tela.setVisible(true);
 	}
 }
