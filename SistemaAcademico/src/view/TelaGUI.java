@@ -401,7 +401,15 @@ public class TelaGUI extends JFrame {
 
 		JMenuItem mntmSobreAjuda = new JMenuItem("Sobre");
 		mnAjuda.add(mntmSobreAjuda);
-
+		
+		mntmSobreAjuda.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String mensagem = "Sistema Universitário";
+				
+				JOptionPane.showMessageDialog(null, mensagem, "Sobre o Sistema", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
+		
 		// Painel principal
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -543,7 +551,7 @@ public class TelaGUI extends JFrame {
 
 					JOptionPane.showMessageDialog(null, "Aluno salvo com sucesso!");
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(null, "Erro ao salvar aluno: " + ex.getMessage());
+					JOptionPane.showMessageDialog(null, "Erro ao cadastrar " );
 				}
 			}
 		});
@@ -629,7 +637,7 @@ public class TelaGUI extends JFrame {
 						txtCelular.setText("");
 					}
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(null, "Erro ao excluir aluno: " + ex.getMessage());
+					JOptionPane.showMessageDialog(null, "Erro ao cadastrar, RGM já existente");
 				}
 			}
 		});
@@ -1046,7 +1054,7 @@ public class TelaGUI extends JFrame {
 					}
 
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(null, "Digite um semestre para consultar: ");
+					JOptionPane.showMessageDialog(null, "Digite o curso e o semestre para consultar: ");
 				}
 			}
 		});
@@ -1172,7 +1180,7 @@ public class TelaGUI extends JFrame {
 		boletimPanel.add(lblCursoBo);
 
 		txtCursoBo = new JTextField();
-		txtCursoBo.setBounds(70, 60, 120, 25);
+		txtCursoBo.setBounds(70, 60, 353, 25);
 		boletimPanel.add(txtCursoBo);
 
 		String colunas[] = { "Disciplina", "Nota 1", "Nota 2", "Média", "Faltas", "Situação" };
@@ -1182,9 +1190,26 @@ public class TelaGUI extends JFrame {
 		tabela = new JTable(modelo);
 
 		JScrollPane scrollPane = new JScrollPane(tabela);
-		scrollPane.setBounds(20, 109, 400, 100);
+		scrollPane.setBounds(103, 158, 400, 100);
 		boletimPanel.add(scrollPane);
 
+		// ========== Componente do Botão Limpar na Aba Boletim ==========
+				JButton btnLimparBo = new JButton("Limpar");
+				btnLimparBo.setBounds(450, 57, 100, 30); // Define a posição do botão na aba do boletim
+				boletimPanel.add(btnLimparBo); // Adiciona o botão ao painel do boletim (ajuste 'boletimPanel' caso o nome da sua variável da aba seja diferente)
+				
+				btnLimparBo.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// Limpa os campos de texto do Boletim
+						txtRgmBo.setText("");
+						txtNomeBo.setText("");
+						txtCursoBo.setText("");
+						
+						// Limpa todas as linhas da JTable do Boletim
+						DefaultTableModel modelo = (DefaultTableModel) tabela.getModel();
+						modelo.setRowCount(0); 
+					}
+				});
 
 		JButton btnBuscar = new JButton("Buscar");
 		btnBuscar.setBounds(450, 20, 100, 25);
