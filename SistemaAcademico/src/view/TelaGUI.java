@@ -5,6 +5,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
 
 import model.Aluno;
+import model.NotasFaltas;
 import dao.AlunoDAO;
 import util.ConnectionFactory;
 
@@ -14,6 +15,8 @@ import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import dao.CursoDAO;
+import dao.NotasFaltasDAO;
+
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,10 @@ public class TelaGUI extends JFrame {
 	private JTextField txtRgmBo;
 	private JTextField txtNomeBo;
 	private JTextField txtCursoBo;
+	private JTextField txtRgmNF, txtSemestreNF, txtA1NF, txtA2NF, txtAfNF, txtFaltasNF;
+	private JComboBox<String> cbDisciplinaNF;
+	private JTextField textField, textField_1;
+	private JButton btnSalvarNF, btnConsultarNF, btnAlterarNF, btnExcluirNF;
 
 	public TelaGUI() throws Exception {
 		setFont(new Font("Arial", Font.PLAIN, 14));
@@ -183,21 +190,210 @@ public class TelaGUI extends JFrame {
 		mntmSairAluno.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK));
 		mnAluno.add(mntmSairAluno);
 
+		// menu notas e faltas com CRUD
+		// ========== Menu Notas e Faltas com CRUD ==========
 		JMenu mnNotasFaltas = new JMenu("Notas e Faltas");
 		menuBar.add(mnNotasFaltas);
 
+		// --- SALVAR NOTAS E FALTAS ---
 		JMenuItem mntmSalvarNotasFaltas = new JMenuItem("Salvar");
 		mnNotasFaltas.add(mntmSalvarNotasFaltas);
+		mntmSalvarNotasFaltas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (txtRgmNF.getText().trim().isEmpty() || txtSemestreNF.getText().trim().isEmpty()) {
+						JOptionPane.showMessageDialog(null,
+								"Preencha ao menos o RGM e o Semestre na aba antes de salvar pelo menu.");
+						return;
+					}
+					if (cbDisciplinaNF.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null, "Selecione uma disciplina na aba.");
+						return;
+					}
 
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+					int rgm = Integer.parseInt(txtRgmNF.getText().trim());
+					int semestre = Integer.parseInt(txtSemestreNF.getText().trim());
+
+					double a1 = txtA1NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA1NF.getText().trim());
+					double a2 = txtA2NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA2NF.getText().trim());
+					double af = txtAfNF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtAfNF.getText().trim());
+					int faltas = txtFaltasNF.getText().trim().isEmpty() ? 0
+							: Integer.parseInt(txtFaltasNF.getText().trim());
+
+					double media = a1 + a2;
+					String status = (media >= 6.0 || af >= 6.0) ? "Aprovado" : (media >= 5.0 ? "AF" : "Reprovado");
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+
+					NotasFaltas nf = new NotasFaltas();
+					nf.setRgm(rgm);
+					nf.setIdDisciplina(idDisciplina);
+					nf.setSemestre(semestre);
+					nf.setA1(a1);
+					nf.setA2(a2);
+					nf.setMedia(media);
+					nf.setAf(af);
+					nf.setFaltas(faltas);
+					nf.setStatusAluno(status);
+
+					dao.salvar(nf);
+					JOptionPane.showMessageDialog(null, "Notas e faltas salvas com sucesso pelo menu!");
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao salvar pelo menu: " + ex.getMessage());
+				}
+			}
+		});
+
+		// --- ALTERAR NOTAS E FALTAS ---
 		JMenuItem mntmAlterarNotasFaltas = new JMenuItem("Alterar");
 		mntmAlterarNotasFaltas.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
 		mnNotasFaltas.add(mntmAlterarNotasFaltas);
+		mntmAlterarNotasFaltas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (txtRgmNF.getText().trim().isEmpty() || txtSemestreNF.getText().trim().isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Preencha o RGM e o Semestre na aba para poder alterar.");
+						return;
+					}
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+					int rgm = Integer.parseInt(txtRgmNF.getText().trim());
+					int semestre = Integer.parseInt(txtSemestreNF.getText().trim());
 
+					double a1 = txtA1NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA1NF.getText().trim());
+					double a2 = txtA2NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA2NF.getText().trim());
+					double af = txtAfNF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtAfNF.getText().trim());
+					int faltas = txtFaltasNF.getText().trim().isEmpty() ? 0
+							: Integer.parseInt(txtFaltasNF.getText().trim());
+
+					double media = a1 + a2;
+					String status = (media >= 6.0 || af >= 6.0) ? "Aprovado" : (media >= 5.0 ? "AF" : "Reprovado");
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+
+					NotasFaltas nf = new NotasFaltas();
+					nf.setRgm(rgm);
+					nf.setIdDisciplina(idDisciplina);
+					nf.setSemestre(semestre);
+					nf.setA1(a1);
+					nf.setA2(a2);
+					nf.setMedia(media);
+					nf.setAf(af);
+					nf.setFaltas(faltas);
+					nf.setStatusAluno(status);
+
+					dao.alterar(nf);
+					JOptionPane.showMessageDialog(null, "Registro alterado com sucesso pelo menu!");
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao alterar pelo menu: " + ex.getMessage());
+				}
+			}
+		});
+
+		// --- EXCLUIR NOTAS E FALTAS ---
 		JMenuItem mntmExcluirNotasFaltas = new JMenuItem("Excluir");
 		mnNotasFaltas.add(mntmExcluirNotasFaltas);
+		mntmExcluirNotasFaltas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String rgmStr = JOptionPane.showInputDialog(null, "Digite o RGM do registro que deseja EXCLUIR:");
+					if (rgmStr == null || rgmStr.trim().isEmpty())
+						return;
 
+					String semStr = JOptionPane.showInputDialog(null, "Digite o Semestre correspondente:");
+					if (semStr == null || semStr.trim().isEmpty())
+						return;
+
+					if (cbDisciplinaNF.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null, "Selecione a disciplina correspondente na caixa da aba.");
+						return;
+					}
+
+					int rgm = Integer.parseInt(rgmStr.trim());
+					int semestre = Integer.parseInt(semStr.trim());
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+
+					int confirm = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir as notas deste aluno?",
+							"Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+
+					if (confirm == JOptionPane.YES_OPTION) {
+						dao.excluir(rgm, idDisciplina, semestre);
+						JOptionPane.showMessageDialog(null, "Registro deletado com sucesso.");
+
+						// Limpa os campos da aba
+						txtRgmNF.setText("");
+						txtSemestreNF.setText("");
+						txtA1NF.setText("");
+						txtA2NF.setText("");
+						txtAfNF.setText("");
+						txtFaltasNF.setText("");
+						textField.setText("");
+						textField_1.setText("");
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao excluir pelo menu: " + ex.getMessage());
+				}
+			}
+		});
+
+		// --- CONSULTAR NOTAS E FALTAS ---
 		JMenuItem mntmConsultarNotasFaltas = new JMenuItem("Consultar");
 		mnNotasFaltas.add(mntmConsultarNotasFaltas);
+		mntmConsultarNotasFaltas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String rgmStr = JOptionPane.showInputDialog(null, "Digite o RGM para consultar Notas:");
+					if (rgmStr == null || rgmStr.trim().isEmpty())
+						return;
+
+					String semStr = JOptionPane.showInputDialog(null, "Digite o Semestre:");
+					if (semStr == null || semStr.trim().isEmpty())
+						return;
+
+					if (cbDisciplinaNF.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null,
+								"Selecione a disciplina que quer consultar na lista da aba.");
+						return;
+					}
+
+					int rgm = Integer.parseInt(rgmStr.trim());
+					int semestre = Integer.parseInt(semStr.trim());
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+					NotasFaltas nf = dao.consultar(rgm, idDisciplina, semestre);
+
+					if (nf != null) {
+						txtRgmNF.setText(String.valueOf(rgm));
+						txtSemestreNF.setText(String.valueOf(semestre));
+						txtA1NF.setText(String.valueOf(nf.getA1()));
+						txtA2NF.setText(String.valueOf(nf.getA2()));
+						txtAfNF.setText(String.valueOf(nf.getAf()));
+						txtFaltasNF.setText(String.valueOf(nf.getFaltas()));
+
+						AlunoDAO alunoDAO = new AlunoDAO();
+						Aluno aluno = alunoDAO.consultarPorRgm(rgm);
+						if (aluno != null) {
+							textField.setText(aluno.getNome());
+						} else {
+							textField.setText("Aluno não cadastrado");
+						}
+
+						JOptionPane.showMessageDialog(null, "Notas localizadas! Status: " + nf.getStatusAluno());
+					} else {
+						JOptionPane.showMessageDialog(null, "Nenhum registro de notas encontrado para esses dados.");
+					}
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao consultar pelo menu: " + ex.getMessage());
+				}
+			}
+		});
 
 		JMenu mnAjuda = new JMenu("Ajuda");
 		menuBar.add(mnAjuda);
@@ -542,7 +738,6 @@ public class TelaGUI extends JFrame {
 
 					Connection conn = ConnectionFactory.getConnection();
 
-					// 1ª Etapa: Descobrir o id_curso correto de acordo com as seleções do usuário
 					String sqlBuscarCurso = "SELECT id_curso FROM tb_curso WHERE nome_curso = ? AND campus = ? AND periodo_curso = ?";
 					PreparedStatement psBuscar = conn.prepareStatement(sqlBuscarCurso);
 					psBuscar.setString(1, cursoSelecionado);
@@ -564,7 +759,6 @@ public class TelaGUI extends JFrame {
 						return;
 					}
 
-					// 2ª Etapa: Fazer o UPDATE na tabela tb_aluno usando o id_curso localizado
 					String sqlUpdateAluno = "UPDATE tb_aluno SET id_curso = ? WHERE rgm = ?";
 					PreparedStatement psUpdate = conn.prepareStatement(sqlUpdateAluno);
 					psUpdate.setInt(1, idCursoEncontrado);
@@ -603,6 +797,302 @@ public class TelaGUI extends JFrame {
 		JPanel notasPanel = new JPanel();
 		notasPanel.setLayout(null);
 		tabbedPane.addTab("Notas e Faltas", notasPanel);
+
+		JLabel lblRgmNF = new JLabel("RGM:");
+		lblRgmNF.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblRgmNF.setBounds(20, 20, 35, 25);
+		notasPanel.add(lblRgmNF);
+
+		txtRgmNF = new JTextField();
+		txtRgmNF.setBounds(67, 20, 90, 25);
+		notasPanel.add(txtRgmNF);
+
+		JLabel lblDisciplinaNF = new JLabel("Disciplina:");
+		lblDisciplinaNF.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblDisciplinaNF.setBounds(20, 108, 100, 25);
+		notasPanel.add(lblDisciplinaNF);
+
+		cbDisciplinaNF = new JComboBox<>();
+		cbDisciplinaNF.setBounds(92, 110, 479, 25);
+		notasPanel.add(cbDisciplinaNF);
+
+		try {
+			NotasFaltasDAO daoNF = new NotasFaltasDAO();
+			for (String disc : daoNF.listarDisciplinas()) {
+				cbDisciplinaNF.addItem(disc);
+			}
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(null, "Erro ao carregar disciplinas: " + ex.getMessage());
+		}
+
+		JLabel lblSemestreNF = new JLabel("Semestre:");
+		lblSemestreNF.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblSemestreNF.setBounds(20, 175, 100, 25);
+		notasPanel.add(lblSemestreNF);
+
+		txtSemestreNF = new JTextField();
+		txtSemestreNF.setBounds(92, 177, 80, 25);
+		notasPanel.add(txtSemestreNF);
+
+		JLabel lblA1NF = new JLabel("A1:");
+		lblA1NF.setBounds(20, 230, 114, 25);
+		notasPanel.add(lblA1NF);
+
+		txtA1NF = new JTextField();
+		txtA1NF.setBounds(40, 230, 80, 25);
+		notasPanel.add(txtA1NF);
+
+		JLabel lblA2NF = new JLabel("A2:");
+		lblA2NF.setBounds(166, 230, 24, 25);
+		notasPanel.add(lblA2NF);
+
+		txtA2NF = new JTextField();
+		txtA2NF.setBounds(200, 230, 80, 25);
+		notasPanel.add(txtA2NF);
+
+		JLabel lblAfNF = new JLabel("AF:");
+		lblAfNF.setBounds(306, 230, 17, 25);
+		notasPanel.add(lblAfNF);
+
+		txtAfNF = new JTextField();
+		txtAfNF.setBounds(333, 230, 80, 25);
+		notasPanel.add(txtAfNF);
+
+		JLabel lblFaltasNF = new JLabel("Faltas:");
+		lblFaltasNF.setBounds(446, 230, 35, 25);
+		notasPanel.add(lblFaltasNF);
+
+		txtFaltasNF = new JTextField();
+		txtFaltasNF.setBounds(491, 230, 80, 25);
+		notasPanel.add(txtFaltasNF);
+
+		JButton btnSalvarNF = new JButton("Salvar");
+		btnSalvarNF.setBounds(20, 266, 100, 67);
+		notasPanel.add(btnSalvarNF);
+
+		JButton btnConsultarNF = new JButton("Consultar");
+		btnConsultarNF.setBounds(130, 266, 100, 67);
+		notasPanel.add(btnConsultarNF);
+
+		JButton btnAlterarNF = new JButton("Alterar");
+		btnAlterarNF.setBounds(240, 266, 100, 67);
+		notasPanel.add(btnAlterarNF);
+
+		JButton btnExcluirNF = new JButton("Excluir");
+		btnExcluirNF.setBounds(350, 266, 100, 67);
+		notasPanel.add(btnExcluirNF);
+
+		JButton btnLimparNF = new JButton("Limpar");
+		btnLimparNF.setBounds(471, 266, 100, 67);
+		notasPanel.add(btnLimparNF);
+
+		textField = new JTextField();
+		textField.setBounds(183, 20, 388, 24);
+		notasPanel.add(textField);
+		textField.setColumns(10);
+
+		textField_1 = new JTextField();
+		textField_1.setBounds(67, 62, 504, 25);
+		notasPanel.add(textField_1);
+		textField_1.setColumns(10);
+
+		btnSalvarNF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (txtRgmNF.getText().trim().isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Informe o RGM.");
+						return;
+					}
+					if (txtSemestreNF.getText().trim().isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Informe o semestre.");
+						return;
+					}
+					if (cbDisciplinaNF.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null, "Selecione uma disciplina.");
+						return;
+					}
+
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+					int rgm = Integer.parseInt(txtRgmNF.getText().trim());
+					int semestre = Integer.parseInt(txtSemestreNF.getText().trim());
+
+					double a1 = txtA1NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA1NF.getText().trim());
+					double a2 = txtA2NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA2NF.getText().trim());
+					double af = txtAfNF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtAfNF.getText().trim());
+					int faltas = txtFaltasNF.getText().trim().isEmpty() ? 0
+							: Integer.parseInt(txtFaltasNF.getText().trim());
+
+					double media = a1 + a2;
+
+					String status;
+					if (media >= 6.0 || af >= 6.0) {
+						status = "Aprovado";
+					} else if (media >= 5.0) {
+						status = "AF";
+					} else {
+						status = "Reprovado";
+					}
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+
+					NotasFaltas nf = new NotasFaltas();
+					nf.setRgm(rgm);
+					nf.setIdDisciplina(idDisciplina);
+					nf.setSemestre(semestre);
+					nf.setA1(a1);
+					nf.setA2(a2);
+					nf.setMedia(media);
+					nf.setAf(af);
+					nf.setFaltas(faltas);
+					nf.setStatusAluno(status);
+
+					dao.salvar(nf);
+					JOptionPane.showMessageDialog(null, "Notas e faltas salvas com sucesso!");
+
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
+				}
+			}
+		});
+
+		btnConsultarNF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (cbDisciplinaNF.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null, "Selecione uma disciplina.");
+						return;
+					}
+
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+					int rgm = Integer.parseInt(txtRgmNF.getText().trim());
+					int semestre = Integer.parseInt(txtSemestreNF.getText().trim());
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+					NotasFaltas nf = dao.consultar(rgm, idDisciplina, semestre);
+
+					if (nf != null) {
+						txtA1NF.setText(String.valueOf(nf.getA1()));
+						txtA2NF.setText(String.valueOf(nf.getA2()));
+						txtAfNF.setText(String.valueOf(nf.getAf()));
+						txtFaltasNF.setText(String.valueOf(nf.getFaltas()));
+
+						// Busca o nome do aluno no banco de dados usando o RGM informado
+						AlunoDAO alunoDAO = new AlunoDAO();
+						Aluno aluno = alunoDAO.consultarPorRgm(rgm);
+						if (aluno != null) {
+							textField.setText(aluno.getNome()); // Preenche o campo de texto ao lado do RGM com o nome
+						} else {
+							textField.setText("Aluno não encontrado");
+						}
+
+						JOptionPane.showMessageDialog(null, "Registro encontrado. Status: " + nf.getStatusAluno());
+					} else {
+						JOptionPane.showMessageDialog(null, "Registro não encontrado.");
+					}
+
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao consultar: " + ex.getMessage());
+				}
+			}
+		});
+
+		btnAlterarNF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (cbDisciplinaNF.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null, "Selecione uma disciplina.");
+						return;
+					}
+
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+					int rgm = Integer.parseInt(txtRgmNF.getText().trim());
+					int semestre = Integer.parseInt(txtSemestreNF.getText().trim());
+
+					double a1 = txtA1NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA1NF.getText().trim());
+					double a2 = txtA2NF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtA2NF.getText().trim());
+					double af = txtAfNF.getText().trim().isEmpty() ? 0.0 : Double.parseDouble(txtAfNF.getText().trim());
+					int faltas = txtFaltasNF.getText().trim().isEmpty() ? 0
+							: Integer.parseInt(txtFaltasNF.getText().trim());
+
+					double media = a1 + a2;
+
+					String status;
+					if (media >= 6.0 || af >= 6.0) {
+						status = "Aprovado";
+					} else if (media >= 5.0) {
+						status = "AF";
+					} else {
+						status = "Reprovado";
+					}
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+
+					NotasFaltas nf = new NotasFaltas();
+					nf.setRgm(rgm);
+					nf.setIdDisciplina(idDisciplina);
+					nf.setSemestre(semestre);
+					nf.setA1(a1);
+					nf.setA2(a2);
+					nf.setMedia(media);
+					nf.setAf(af);
+					nf.setFaltas(faltas);
+					nf.setStatusAluno(status);
+
+					dao.alterar(nf);
+					JOptionPane.showMessageDialog(null, "Registro alterado com sucesso!");
+
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao alterar: " + ex.getMessage());
+				}
+			}
+		});
+
+		btnExcluirNF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					if (cbDisciplinaNF.getSelectedItem() == null) {
+						JOptionPane.showMessageDialog(null, "Selecione uma disciplina.");
+						return;
+					}
+
+					String disciplinaSelecionada = cbDisciplinaNF.getSelectedItem().toString();
+					int rgm = Integer.parseInt(txtRgmNF.getText().trim());
+					int semestre = Integer.parseInt(txtSemestreNF.getText().trim());
+
+					NotasFaltasDAO dao = new NotasFaltasDAO();
+					int idDisciplina = dao.buscarIdDisciplinaPorNome(disciplinaSelecionada);
+
+					int confirm = JOptionPane.showConfirmDialog(null, "Deseja realmente excluir este registro?",
+							"Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+
+					if (confirm == JOptionPane.YES_OPTION) {
+						dao.excluir(rgm, idDisciplina, semestre);
+						JOptionPane.showMessageDialog(null, "Registro excluído com sucesso!");
+						btnLimparNF.doClick();
+					}
+
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(null, "Erro ao excluir: " + ex.getMessage());
+				}
+			}
+		});
+
+		btnLimparNF.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				txtRgmNF.setText("");
+				txtSemestreNF.setText("");
+				txtA1NF.setText("");
+				txtA2NF.setText("");
+				txtAfNF.setText("");
+				txtFaltasNF.setText("");
+				if (cbDisciplinaNF.getItemCount() > 0) {
+					cbDisciplinaNF.setSelectedIndex(0);
+				}
+			}
+		});
 
 		// ========== Aba Boletim ==========
 		JPanel boletimPanel = new JPanel();

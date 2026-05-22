@@ -1,38 +1,63 @@
 package model;
 
 public class NotasFaltas {
-    private String rgm;
-    private String disciplina;
-    private String semestre;
-    private double nota;
+    private int idNotaFalta;
+    private int rgm;
+    private int idDisciplina;
+    private int semestre;
+    private double a1;
+    private double a2;
+    private double media;
+    private double af;
     private int faltas;
+    private String statusAluno;
 
     // Construtor vazio
     public NotasFaltas() {
     }
 
-    // Construtor 
-    public NotasFaltas(String rgm, String disciplina, String semestre, double nota, int faltas) {
+    // Construtor completo
+    public NotasFaltas(int idNotaFalta, int rgm, int idDisciplina, int semestre, double a1, double a2, double media, double af, int faltas, String statusAluno) {
+        this.idNotaFalta = idNotaFalta;
         this.rgm = rgm;
-        this.disciplina = disciplina;
+        this.idDisciplina = idDisciplina;
         this.semestre = semestre;
-        this.nota = nota;
+        this.a1 = a1;
+        this.a2 = a2;
+        this.media = media;
+        this.af = af;
         this.faltas = faltas;
+        this.statusAluno = statusAluno;
     }
 
     // Métodos Getters e Setters
-    public String getRgm() { return rgm; }
-    public void setRgm(String rgm) { this.rgm = rgm; }
+    public int getIdNotaFalta() { return idNotaFalta; }
+    public void setIdNotaFalta(int idNotaFalta) { this.idNotaFalta = idNotaFalta; }
 
-    public String getDisciplina() { return disciplina; }
-    public void setDisciplina(String disciplina) { this.disciplina = disciplina; }
+    public int getRgm() { return rgm; }
+    public void setRgm(int rgm) { this.rgm = rgm; }
 
-    public String getSemestre() { return semestre; }
-    public void setSemestre(String semestre) { this.semestre = semestre; }
+    public int getIdDisciplina() { return idDisciplina; }
+    public void setIdDisciplina(int idDisciplina) { this.idDisciplina = idDisciplina; }
 
-    public double getNota() { return nota; }
-    public void setNota(double nota) { this.nota = nota; }
+    public int getSemestre() { return semestre; }
+    public void setSemestre(int semestre) { this.semestre = semestre; }
+
+    public double getA1() { return a1; }
+    public void setA1(double a1) { this.a1 = a1; }
+
+    public double getA2() { return a2; }
+    public void setA2(double a2) { this.a2 = a2; }
+
+    public double getMedia() { return media; }
+    public void setMedia(double media) { this.media = media; }
+
+    public double getAf() { return af; }
+    public void setAf(double af) { this.af = af; }
 
     public int getFaltas() { return faltas; }
     public void setFaltas(int faltas) { this.faltas = faltas; }
+
+    public String getStatusAluno() { return statusAluno; }
+    public void setStatusAluno(String statusAluno) { this.statusAluno = statusAluno; }
 }
