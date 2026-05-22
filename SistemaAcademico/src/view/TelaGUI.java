@@ -187,7 +187,7 @@ public class TelaGUI extends JFrame {
 
 		JMenuItem mntmSairAluno = new JMenuItem("Sair");
 		mntmSairAluno.addActionListener(e -> System.exit(0));
-		mntmSairAluno.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK));
+		mntmSairAluno.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK));
 		mnAluno.add(mntmSairAluno);
 
 		// menu notas e faltas com CRUD
@@ -197,6 +197,7 @@ public class TelaGUI extends JFrame {
 
 		// --- SALVAR NOTAS E FALTAS ---
 		JMenuItem mntmSalvarNotasFaltas = new JMenuItem("Salvar");
+		mntmSalvarNotasFaltas.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK));
 		mnNotasFaltas.add(mntmSalvarNotasFaltas);
 		mntmSalvarNotasFaltas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -246,7 +247,7 @@ public class TelaGUI extends JFrame {
 			}
 		});
 
-		// --- ALTERAR NOTAS E FALTAS ---
+		//alterando ---
 		JMenuItem mntmAlterarNotasFaltas = new JMenuItem("Alterar");
 		mntmAlterarNotasFaltas.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_DOWN_MASK));
 		mnNotasFaltas.add(mntmAlterarNotasFaltas);
@@ -292,7 +293,7 @@ public class TelaGUI extends JFrame {
 			}
 		});
 
-		// --- EXCLUIR NOTAS E FALTAS ---
+		//excluindo
 		JMenuItem mntmExcluirNotasFaltas = new JMenuItem("Excluir");
 		mnNotasFaltas.add(mntmExcluirNotasFaltas);
 		mntmExcluirNotasFaltas.addActionListener(new ActionListener() {
@@ -704,10 +705,12 @@ public class TelaGUI extends JFrame {
 		grupoPeriodo.add(rdbtnNoturno);
 
 		JButton btnNewButton = new JButton("");
+		btnNewButton.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\consultar.png"));
 		btnNewButton.setBounds(44, 225, 92, 75);
 		cursoPanel.add(btnNewButton);
 
-		JButton btnNewButton_1 = new JButton("Salvar Curso");
+		JButton btnNewButton_1 = new JButton("");
+		btnNewButton_1.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\salvar.png"));
 		btnNewButton_1.setBounds(176, 225, 92, 75);
 		cursoPanel.add(btnNewButton_1);
 		btnNewButton_1.addActionListener(new ActionListener() {
@@ -785,11 +788,12 @@ public class TelaGUI extends JFrame {
 		});
 
 		JButton btnNewButton_2 = new JButton("");
+		btnNewButton_2.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\info.png"));
 		btnNewButton_2.setBounds(300, 225, 92, 75);
 		cursoPanel.add(btnNewButton_2);
 
 		JButton btnNewButton_3 = new JButton("");
-		btnNewButton_3.setIcon(new ImageIcon("/Users/beatriz/Downloads/java-2.png"));
+		btnNewButton_3.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\sair.png"));
 		btnNewButton_3.setBounds(430, 225, 92, 75);
 		cursoPanel.add(btnNewButton_3);
 
@@ -806,6 +810,49 @@ public class TelaGUI extends JFrame {
 		txtRgmNF = new JTextField();
 		txtRgmNF.setBounds(67, 20, 90, 25);
 		notasPanel.add(txtRgmNF);
+
+		// Evento criado para buscar dados do Aluno e do Curso de forma automatica pelo RGM ao perder o foco
+		txtRgmNF.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				String rgmTexto = txtRgmNF.getText().trim();
+				if (!rgmTexto.isEmpty()) {
+					try {
+						int rgm = Integer.parseInt(rgmTexto);
+						AlunoDAO alunoDAO = new AlunoDAO();
+						Aluno aluno = alunoDAO.consultarPorRgm(rgm);
+						
+						if (aluno != null) {
+							textField.setText(aluno.getNome());
+							
+							// Busca o nome do curso baseado no id_curso do aluno encontrado
+							Connection conn = ConnectionFactory.getConnection();
+							String sqlCurso = "SELECT nome_curso FROM tb_curso WHERE id_curso = ?";
+							PreparedStatement psCurso = conn.prepareStatement(sqlCurso);
+							psCurso.setInt(1, aluno.getIdCurso());
+							ResultSet rsCurso = psCurso.executeQuery();
+							
+							if (rsCurso.next()) {
+								textField_1.setText(rsCurso.getString("nome_curso"));
+							} else {
+								textField_1.setText("Curso não localizado");
+							}
+							
+							rsCurso.close();
+							psCurso.close();
+							conn.close();
+						} else {
+							textField.setText("Aluno não cadastrado");
+							textField_1.setText("");
+						}
+					} catch (NumberFormatException nfe) {
+						JOptionPane.showMessageDialog(null, "O campo RGM aceita apenas números.");
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(null, "Erro ao buscar dados automáticos do aluno: " + ex.getMessage());
+					}
+				}
+			}
+		});
 
 		JLabel lblDisciplinaNF = new JLabel("Disciplina:");
 		lblDisciplinaNF.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -866,23 +913,29 @@ public class TelaGUI extends JFrame {
 		txtFaltasNF.setBounds(491, 230, 80, 25);
 		notasPanel.add(txtFaltasNF);
 
-		JButton btnSalvarNF = new JButton("Salvar");
+		JButton btnSalvarNF = new JButton("");
+		btnSalvarNF.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\opcao-de-salvar-arquivo.png"));
+		btnSalvarNF.setSelectedIcon(null);
 		btnSalvarNF.setBounds(20, 266, 100, 67);
 		notasPanel.add(btnSalvarNF);
 
-		JButton btnConsultarNF = new JButton("Consultar");
+		JButton btnConsultarNF = new JButton("");
+		btnConsultarNF.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\lupa (2).png"));
 		btnConsultarNF.setBounds(130, 266, 100, 67);
 		notasPanel.add(btnConsultarNF);
 
-		JButton btnAlterarNF = new JButton("Alterar");
+		JButton btnAlterarNF = new JButton("");
+		btnAlterarNF.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\mudar.png"));
 		btnAlterarNF.setBounds(240, 266, 100, 67);
 		notasPanel.add(btnAlterarNF);
 
-		JButton btnExcluirNF = new JButton("Excluir");
+		JButton btnExcluirNF = new JButton("");
+		btnExcluirNF.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\excluir.png"));
 		btnExcluirNF.setBounds(350, 266, 100, 67);
 		notasPanel.add(btnExcluirNF);
 
-		JButton btnLimparNF = new JButton("Limpar");
+		JButton btnLimparNF = new JButton("");
+		btnLimparNF.setIcon(new ImageIcon("C:\\Users\\Laura\\Downloads\\vassoura.png"));
 		btnLimparNF.setBounds(471, 266, 100, 67);
 		notasPanel.add(btnLimparNF);
 
@@ -993,7 +1046,7 @@ public class TelaGUI extends JFrame {
 					}
 
 				} catch (Exception ex) {
-					JOptionPane.showMessageDialog(null, "Erro ao consultar: " + ex.getMessage());
+					JOptionPane.showMessageDialog(null, "Digite um semestre para consultar: ");
 				}
 			}
 		});
@@ -1088,9 +1141,8 @@ public class TelaGUI extends JFrame {
 				txtA2NF.setText("");
 				txtAfNF.setText("");
 				txtFaltasNF.setText("");
-				if (cbDisciplinaNF.getItemCount() > 0) {
-					cbDisciplinaNF.setSelectedIndex(0);
-				}
+				textField.setText("");   // Limpa o campo Nome
+				textField_1.setText(""); // Limpa o campo Curso
 			}
 		});
 
@@ -1133,13 +1185,6 @@ public class TelaGUI extends JFrame {
 		scrollPane.setBounds(20, 109, 400, 100);
 		boletimPanel.add(scrollPane);
 
-		JLabel lblMediaGeral = new JLabel("Média Geral: 7.5");
-		lblMediaGeral.setBounds(20, 250, 150, 25);
-		boletimPanel.add(lblMediaGeral);
-
-		JLabel lblFaltas = new JLabel("Total de Faltas: 6");
-		lblFaltas.setBounds(200, 250, 150, 25);
-		boletimPanel.add(lblFaltas);
 
 		JButton btnBuscar = new JButton("Buscar");
 		btnBuscar.setBounds(450, 20, 100, 25);
