@@ -6,20 +6,18 @@ import java.sql.SQLException;
 
 public class ConnectionFactory {
 
-    // Configurações do seu banco de dados
-    // Altere "seu_banco_de_dados", "seu_usuario" e "sua_senha" de acordo com o seu ambiente
-    private static final String URL = "jdbc:mysql://localhost:3306/sistema_academico";
+    // Adicionados parâmetros para corrigir o fuso horário (serverTimezone), SSL e codificação de caracteres (characterEncoding)
+    private static final String URL = "jdbc:mysql://localhost:3306/sistema_academico?useTimezone=true&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8";
     private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static final String PASSWORD = "Lcs14hmhm@";
+    
+    // Atualizado para o driver moderno do MySQL (com.mysql.cj.jdbc.Driver)
     private static final String DRIVER = "com.mysql.jdbc.Driver";
 
-    // Método responsável por abrir e retornar a conexão
     public static Connection getConnection() throws Exception {
         try {
-            // Garante que o driver do banco está carregado na memória
             Class.forName(DRIVER);
             
-            // Cria e retorna a conexão com os parâmetros configurados
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (ClassNotFoundException e) {
             throw new Exception("Driver do banco de dados não encontrado: " + e.getMessage());
