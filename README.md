@@ -9,7 +9,7 @@ O sistema permite o gerenciamento de alunos, cursos, disciplinas, notas e faltas
 
  🛠️ Tecnologias
 
-- **Java** com interface gráfica **Swing**
+- **Java** Linguagem principal
 - **MySQL** como banco de dados
 - **JDBC** para comunicação com o banco
 - **Eclipse IDE** como ambiente de desenvolvimento
