@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotasFaltasDAO {
+public class NotasFaltasDAO { 
 
     private String calcularStatus(double media, double af) {
         if (media >= 6.0) {
